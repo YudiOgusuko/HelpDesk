@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: HelpDesk
+
+  datasource:
+    url: jdbc:postgresql://${HOST_POSTGRES}/${HELPDESK_POSTGRES}
+    username: ${USERNAME_POSTGRES}
+    password: ${PASSWORD_POSTGRES}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
