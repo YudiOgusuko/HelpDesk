@@ -1,8 +1,6 @@
 package Project.HelpDesk.validation.comentarioServiceValidation;
 
 import Project.HelpDesk.dto.ComentarioBaseDto;
-import Project.HelpDesk.dto.ComentarioChamadoDto;
-import Project.HelpDesk.entity.ComentarioEntity;
 import Project.HelpDesk.entity.UsuarioEntity;
 import Project.HelpDesk.enums.Perfil;
 import Project.HelpDesk.handler.exception.BadRequestException;
@@ -11,11 +9,9 @@ import Project.HelpDesk.repository.IUsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
-public class UserValidation implements ValidacoesComentarioChamado<UsuarioEntity, ComentarioBaseDto> {
+public class UserComentarioValidation implements ValidacoesComentarioChamado<UsuarioEntity, ComentarioBaseDto> {
 
     private final IUsuarioRepository usuarioRepository;
     private final ChamadoValidation chamadoValidation;
@@ -30,26 +26,12 @@ public class UserValidation implements ValidacoesComentarioChamado<UsuarioEntity
             throw new BadRequestException(String.format("O perfil '%s' não pode realizar um comentário", Perfil.pegarValor(user.getPerfil())));
         }
 
-        Optional<ComentarioEntity> comentarioIgual = user.getComentarios()
+       var comentarioIgual = user.getComentarios()
                 .stream()
                 .filter(x -> x.getTexto().equalsIgnoreCase(comentarioDto.texto()))
                 .findFirst();
         if(comentarioIgual.isPresent()) {
             throw new BadRequestException(String.format("O usuário com o Id '%d' já tem um comentário igual a esse.", comentarioDto.user()));
-        }
-
-
-        var chamado = chamadoValidation.validar(ComentarioChamadoDto.builder()
-                        .texto(comentarioDto.texto()).user(comentarioDto.user())
-                        .build());
-
-        Optional<ComentarioEntity> possuiChamado = chamado.getComentarios()
-                .stream()
-                .filter(x -> x.getTexto().equalsIgnoreCase(comentarioDto.texto()))
-                .findFirst();
-
-        if(possuiChamado.isPresent()) {
-            throw new BadRequestException(String.format("O chamado com o Id '%d' já tem um comentário igual a esse.", possuiChamado.get().getChamado()));
         }
 
         return user;

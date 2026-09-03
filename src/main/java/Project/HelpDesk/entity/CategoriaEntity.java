@@ -7,7 +7,6 @@ import lombok.*;
 
 import java.util.Set;
 
-
 @JsonPropertyOrder({
         "id",
         "nome",

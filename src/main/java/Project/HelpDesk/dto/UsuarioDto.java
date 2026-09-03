@@ -6,15 +6,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
+@Builder
 @JsonPropertyOrder({
         "nome",
         "email",
         "perfil"
 })
 
-@Builder
-public record UsuarioDto(@NotBlank String nome,
-                         @NotBlank String email,
-                         @NotNull(message = "O perfil não pode ser NULL.") Perfil perfil
-                        ){
+public record UsuarioDto(
+        @NotBlank String nome,
+        @NotBlank String email,
+        @NotNull(message = "O perfil não pode ser NULL.") Perfil perfil
+){
 }

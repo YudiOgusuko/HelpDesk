@@ -5,15 +5,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
+@Builder
 @JsonPropertyOrder({
         "texto",
         "chamado",
         "user"
 })
 
-@Builder
-public record ComentarioChamadoDto(@NotBlank String texto,
-                                   @NotNull Long chamado,
-                                   @NotNull Long user
-                                    ) implements ComentarioBaseDto {
+public record ComentarioChamadoDto(
+         @NotBlank String texto,
+         @NotNull Long chamado,
+         @NotNull Long user
+)implements ComentarioBaseDto {
 }

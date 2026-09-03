@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
+@Builder
 @JsonPropertyOrder({
         "idUsuario",
         "titulo",
@@ -16,12 +17,12 @@ import lombok.Builder;
         "idCategoria"
 })
 
-@Builder
-public record ChamadoDto(@NotNull Long idUsuario,
-                         @NotBlank String titulo,
-                         @NotBlank String descricao,
-                         @NotNull(message = "A prioridade não pode ser NULL.") Prioridade prioridade,
-                         @NotNull(message = "O status não pode ser NULL") Status status,
-                         @NotNull Long idCategoria
-                        ){
+public record ChamadoDto(
+        @NotNull Long idUsuario,
+        @NotBlank String titulo,
+        @NotBlank String descricao,
+        @NotNull(message = "A prioridade não pode ser NULL.") Prioridade prioridade,
+        @NotNull(message = "O status não pode ser NULL") Status status,
+        @NotNull Long idCategoria
+){
 }

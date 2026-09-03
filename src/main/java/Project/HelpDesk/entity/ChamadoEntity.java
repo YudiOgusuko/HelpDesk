@@ -1,6 +1,5 @@
 package Project.HelpDesk.entity;
 
-import Project.HelpDesk.dto.ChamadoDto;
 import Project.HelpDesk.enums.Prioridade;
 import Project.HelpDesk.enums.Status;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -68,29 +67,4 @@ public class ChamadoEntity {
 
     @OneToMany(mappedBy = "chamado", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ComentarioEntity> comentarios;
-
-    public void criarCliente(ChamadoDto chamadoDto, CategoriaEntity categoria, UsuarioEntity user) {
-        this.titulo = chamadoDto.titulo();
-        this.descricao = chamadoDto.descricao();
-        this.prioridade = chamadoDto.prioridade();
-        this.status = chamadoDto.status();
-        this.categoria = categoria;
-        this.userCliente = user;
-    }
-
-    public void criarAtendente (ChamadoDto chamadoDto, CategoriaEntity categoria, UsuarioEntity user) {
-        this.titulo = chamadoDto.titulo();
-        this.descricao = chamadoDto.descricao();
-        this.prioridade = chamadoDto.prioridade();
-        this.status = chamadoDto.status();
-        this.categoria = categoria;
-        this.userAtendente = user;
-    }
-
-    public void atualizarChamado(ChamadoDto chamadoDto) {
-        this.titulo = chamadoDto.titulo();
-        this.descricao = chamadoDto.descricao();
-        this.prioridade = chamadoDto.prioridade();
-        this.status = chamadoDto.status();
-    }
 }

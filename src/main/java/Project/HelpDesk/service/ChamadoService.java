@@ -1,14 +1,16 @@
 package Project.HelpDesk.service;
 
 import Project.HelpDesk.dto.ChamadoDto;
+import Project.HelpDesk.entity.CategoriaEntity;
 import Project.HelpDesk.entity.ChamadoEntity;
+import Project.HelpDesk.entity.UsuarioEntity;
 import Project.HelpDesk.enums.Perfil;
 import Project.HelpDesk.handler.exception.BadRequestException;
 import Project.HelpDesk.handler.exception.NotFoundException;
 import Project.HelpDesk.projection.ChamadoProjection;
 import Project.HelpDesk.repository.IChamadoRepository;
 import Project.HelpDesk.validation.chamadoServiceValidation.CategoriaValidation;
-import Project.HelpDesk.validation.chamadoServiceValidation.UserValidation;
+import Project.HelpDesk.validation.chamadoServiceValidation.UserChamadoValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,9 +24,9 @@ import java.util.List;
 public class ChamadoService {
 
     private final IChamadoRepository chamadoRepository;
-    private final UserValidation userValidation;
+    private final UserChamadoValidation userChamadoValidation;
     private final CategoriaValidation categoriaValidation;
-    private ChamadoEntity chamado;
+    private ChamadoEntity chamado = new ChamadoEntity();
 
     public List<ChamadoDto> findAll() {
         return chamadoRepository.findAll()
@@ -55,14 +57,14 @@ public class ChamadoService {
     @Transactional
     public ChamadoDto criarChamado(ChamadoDto chamadoDto) {
 
-        var user = userValidation.validar(chamadoDto);
+        var user = userChamadoValidation.validar(chamadoDto);
         var categoria = categoriaValidation.validar(chamadoDto);
 
         if (user.getPerfil().equals(Perfil.CLIENTE)) {
-          chamado.criarCliente(chamadoDto, categoria, user);
+            chamado = criarCliente(chamadoDto, categoria, user);
         }
         else if (user.getPerfil().equals(Perfil.ATENDENTE)) {
-            chamado.criarAtendente(chamadoDto, categoria, user);
+            chamado = criarAtendente(chamadoDto, categoria, user);
         }
         else {
             throw new BadRequestException(String.format("O perfil '%s' não pode fazer um chamado.", Perfil.pegarValor(user.getPerfil())));
@@ -78,8 +80,8 @@ public class ChamadoService {
         chamado = chamadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Nenhum chamado com o ID '%d' foi encontrado.", id)));
 
-        chamado.atualizarChamado(chamadoDto);
-        chamadoRepository.save(chamado);
+        var chamadoAtualizado = atualizarChamado(chamado, chamadoDto);
+        chamadoRepository.save(chamadoAtualizado);
         return chamadoDto;
     }
 
@@ -88,9 +90,36 @@ public class ChamadoService {
         chamadoRepository.deleteById(id);
     }
 
-
+    @Transactional
     public void deleteAll() {
         chamadoRepository.deleteAll();
     }
 
-}
+    private ChamadoEntity criarCliente(ChamadoDto chamadoDto, CategoriaEntity categoria, UsuarioEntity user) {
+        return ChamadoEntity.builder()
+                .titulo(chamadoDto.titulo()).descricao(chamadoDto.descricao())
+                .prioridade(chamadoDto.prioridade()).status(chamadoDto.status())
+                .categoria(categoria).userCliente(user)
+                .build();
+    }
+
+    private ChamadoEntity criarAtendente(ChamadoDto chamadoDto, CategoriaEntity categoria, UsuarioEntity user) {
+        return ChamadoEntity.builder()
+                .titulo(chamadoDto.titulo()).descricao(chamadoDto.descricao())
+                .prioridade(chamadoDto.prioridade()).status(chamadoDto.status())
+                .categoria(categoria).userAtendente(user)
+                .build();
+    }
+
+    private ChamadoEntity atualizarChamado(ChamadoEntity chamado, ChamadoDto chamadoDto) {
+
+        chamado.setTitulo(chamadoDto.titulo());
+        chamado.setDescricao(chamadoDto.descricao());
+        chamado.setPrioridade(chamadoDto.prioridade());
+        chamado.setStatus(chamadoDto.status());
+
+        return chamado;
+        }
+    }
+
+

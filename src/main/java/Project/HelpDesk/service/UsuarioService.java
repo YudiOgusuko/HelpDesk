@@ -62,17 +62,14 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioDto alterarUser(Long id, UsuarioDto usuarioDto) {
-        Optional<UsuarioEntity> userId = usuarioRepository.findById(id);
+        var user = usuarioRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException(String.format("Nenhum usuário com o ID '%d' foi encontrado.", id)));
 
-        if(userId.isEmpty()) {
-            throw new BadRequestException(String.format("Nenhum usuário com o ID '%d' foi encontrado.", id));
-        }
+        user.setNome(usuarioDto.nome());
+        user.setEmail(usuarioDto.email());
+        user.setPerfil(usuarioDto.perfil());
 
-        userId.get().setNome(usuarioDto.nome());
-        userId.get().setEmail(usuarioDto.email());
-        userId.get().setPerfil(usuarioDto.perfil());
-
-        usuarioRepository.save(userId.get());
+        usuarioRepository.save(user);
         return usuarioDto;
     }
 

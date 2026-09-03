@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserValidation implements ValidacoesChamado<UsuarioEntity> {
+public class UserChamadoValidation implements ValidacoesChamado<UsuarioEntity> {
 
     private final IUsuarioRepository usuarioRepository;
 
@@ -28,7 +28,7 @@ public class UserValidation implements ValidacoesChamado<UsuarioEntity> {
 
         if (tituloDuplicado.isPresent()) {
             throw new BadRequestException(
-                    String.format("Título '%s' já foi cadastrado para o perfil '%s'.", chamadoDto.titulo(), user.getPerfil()));
+                    String.format("Título '%s' já foi cadastrado para o perfil com o ID '%d'.", chamadoDto.titulo(), user.getId()));
         }
 
         return user;

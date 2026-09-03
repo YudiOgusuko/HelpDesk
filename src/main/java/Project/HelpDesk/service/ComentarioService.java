@@ -7,9 +7,8 @@ import Project.HelpDesk.entity.ChamadoEntity;
 import Project.HelpDesk.entity.ComentarioEntity;
 import Project.HelpDesk.handler.exception.NotFoundException;
 import Project.HelpDesk.repository.IComentarioRepository;
-import Project.HelpDesk.repository.IUsuarioRepository;
 import Project.HelpDesk.validation.comentarioServiceValidation.ChamadoValidation;
-import Project.HelpDesk.validation.comentarioServiceValidation.UserValidation;
+import Project.HelpDesk.validation.comentarioServiceValidation.UserComentarioValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +20,8 @@ import java.util.List;
 public class ComentarioService {
 
     private final IComentarioRepository comentarioRepository;
-    private final IUsuarioRepository usuarioRepository;
     private final ChamadoValidation chamadoValidation;
-    private final UserValidation userValidation;
-
+    private final UserComentarioValidation userComentarioValidation;
 
     public List<ComentarioDto> findAll() {
         return comentarioRepository.findAll()
@@ -45,7 +42,7 @@ public class ComentarioService {
     @Transactional
     public ComentarioChamadoDto criarComentarioChamado(ComentarioChamadoDto comentarioChamadoDto) {
 
-        userValidation.validar(comentarioChamadoDto);
+        userComentarioValidation.validar(comentarioChamadoDto);
         ChamadoEntity chamado = chamadoValidation.validar(comentarioChamadoDto);
 
         comentarioRepository.save(ComentarioEntity
@@ -60,10 +57,11 @@ public class ComentarioService {
     @Transactional
     public ComentarioUsuarioDto criarComentarioUser(ComentarioUsuarioDto comentarioUsuarioDto) {
 
-       var user = userValidation.validar(comentarioUsuarioDto);
+       var user = userComentarioValidation.validar(comentarioUsuarioDto);
 
        comentarioRepository.save(ComentarioEntity.builder()
-                .texto(comentarioUsuarioDto.texto()) .user(user)
+                .texto(comentarioUsuarioDto.texto())
+                .user(user)
                 .build());
 
         return comentarioUsuarioDto;
@@ -76,10 +74,7 @@ public class ComentarioService {
                 .orElseThrow(() -> new NotFoundException(String.format("Comentário com o Id '%d' não foi encontrado.", id)));
 
         comentario.setTexto(comentarioDto.texto());
-        comentarioRepository.save(ComentarioEntity
-                .builder()
-                .texto(comentarioDto.texto())
-                .build());
+        comentarioRepository.save(comentario);
         return comentarioDto;
     }
 

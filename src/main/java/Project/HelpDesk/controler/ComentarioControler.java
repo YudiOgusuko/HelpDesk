@@ -23,8 +23,7 @@ public class ComentarioControler {
 
     @GetMapping
     public ResponseEntity<List<ComentarioDto>> findAll() {
-        service.findAll();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping(value = "/{id}")
@@ -38,7 +37,7 @@ public class ComentarioControler {
     }
 
     @PostMapping(value = "/user")
-    public ResponseEntity<ComentarioUsuarioDto> criarComentarioUser(@RequestBody ComentarioUsuarioDto comentarioUsuarioDto) {
+    public ResponseEntity<ComentarioUsuarioDto> criarComentarioUser(@Valid @RequestBody ComentarioUsuarioDto comentarioUsuarioDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.criarComentarioUser(comentarioUsuarioDto));
     }
 
