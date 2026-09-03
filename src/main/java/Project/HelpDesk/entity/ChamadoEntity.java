@@ -2,8 +2,6 @@ package Project.HelpDesk.entity;
 
 import Project.HelpDesk.enums.Prioridade;
 import Project.HelpDesk.enums.Status;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.*;
@@ -55,22 +53,18 @@ public class ChamadoEntity {
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "userCliente_id")
-    @JsonBackReference
     private UsuarioEntity userCliente;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "userAtendente_id")
-    @JsonBackReference
     private UsuarioEntity userAtendente;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id")
-    @JsonBackReference
     private CategoriaEntity categoria;
 
     @OneToMany(mappedBy = "chamado", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private Set<ComentarioEntity> comentarios;
 }

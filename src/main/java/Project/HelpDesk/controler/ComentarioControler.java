@@ -1,12 +1,13 @@
 package Project.HelpDesk.controler;
 
 import Project.HelpDesk.dto.ComentarioChamadoDto;
+import Project.HelpDesk.dto.ComentarioDto;
 import Project.HelpDesk.dto.ComentarioUsuarioDto;
-import Project.HelpDesk.entity.ComentarioEntity;
 import Project.HelpDesk.service.ComentarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,44 +22,39 @@ public class ComentarioControler {
     private final ComentarioService service;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<ComentarioEntity> findAll() {
-        return service.findAll();
+    public ResponseEntity<List<ComentarioDto>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ComentarioEntity findById(@PathVariable Long id) {
-        return service.findById(id);
+    public ResponseEntity<ComentarioDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(value = "/chamado")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void criarComentarioChamado(@RequestBody ComentarioChamadoDto comentarioChamadoDto) {
-        service.criarComentarioChamado(comentarioChamadoDto);
+    public ResponseEntity<ComentarioChamadoDto> criarComentarioChamado(@RequestBody ComentarioChamadoDto comentarioChamadoDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarComentarioChamado(comentarioChamadoDto));
     }
 
     @PostMapping(value = "/user")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void criarComentarioUser(@RequestBody ComentarioUsuarioDto comentarioUsuarioDto) {
-        service.criarComentarioUser(comentarioUsuarioDto);
+    public ResponseEntity<ComentarioUsuarioDto> criarComentarioUser(@Valid @RequestBody ComentarioUsuarioDto comentarioUsuarioDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarComentarioUser(comentarioUsuarioDto));
     }
 
     @PutMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void alterarComentario(@PathVariable Long id, @Valid @RequestBody ComentarioChamadoDto comentarioChamadoDto) {
-        service.alterarComentario(id, comentarioChamadoDto);
+    public ResponseEntity<ComentarioDto> alterarComentario(@PathVariable Long id, @Valid @RequestBody ComentarioDto comentarioDto) {
+        return ResponseEntity.ok(service.alterarComentario(id, comentarioDto));
     }
 
     @DeleteMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAll() {
+    public ResponseEntity<Void> deleteAll() {
         service.deleteAll();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

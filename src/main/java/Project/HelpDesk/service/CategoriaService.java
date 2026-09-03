@@ -6,7 +6,6 @@ import Project.HelpDesk.enums.Categoria;
 import Project.HelpDesk.handler.exception.NotFoundException;
 import Project.HelpDesk.projection.CategoriaProjection;
 import Project.HelpDesk.repository.ICategoriaRepository;
-import Project.HelpDesk.repository.IChamadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,15 +19,18 @@ import java.util.List;
 public class CategoriaService {
 
     private final ICategoriaRepository categoriaRepository;
-    private final IChamadoRepository chamadoRepository;
 
-    public List<CategoriaEntity> findAll() {
-        return categoriaRepository.findAll();
+    public List<CategoriaDto> findAll() {
+        return categoriaRepository.findAll().stream().map(c -> new CategoriaDto(c.getNome())).toList();
     }
 
-    public CategoriaEntity findById(Long id) {
-        return categoriaRepository.findById(id)
+    public CategoriaDto findById(Long id) {
+        CategoriaEntity categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Nenhuma categoria com o ID '%d' foi encontrada.", id)));
+
+        return CategoriaDto.builder()
+                .nome(categoria.getNome())
+                .build();
     }
 
     public List<CategoriaProjection> getProjection() {
@@ -39,24 +41,31 @@ public class CategoriaService {
         return categoriaRepository.pageable(PageRequest.of(page, size));
     }
 
-    public void criarCategoria(CategoriaDto categoriaDto) {
-         var categoria = categoriaRepository.findByNome(categoriaDto.getNome());
+    @Transactional
+    public CategoriaDto criarCategoria(CategoriaDto categoriaDto) {
+         var categoria = categoriaRepository.findByNome(categoriaDto.nome());
 
          if(categoria.isPresent()) {
            throw new NotFoundException(String.format("Categoria com o nome '%s' ja foi cadastrada.",
-                     Categoria.pegarValor(categoriaDto.getNome())));
+                     Categoria.pegarValor(categoriaDto.nome())));
          }
 
          categoriaRepository.save(CategoriaEntity.builder()
-                    .nome(categoriaDto.getNome())
+                    .nome(categoriaDto.nome())
                     .build());
+
+         return categoriaDto;
     }
 
-    public void alterarCategoria(Long id, CategoriaDto categoriaDto) {
-        var categoria = findById(id);
+    @Transactional
+    public CategoriaDto alterarCategoria(Long id, CategoriaDto categoriaDto) {
+        var categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Nenhuma categoria com o ID '%d' foi encontrada.", id)));
 
-        categoria.setNome(categoriaDto.getNome());
+        categoria.setNome(categoriaDto.nome());
         categoriaRepository.save(categoria);
+
+        return categoriaDto;
     }
 
     @Transactional
@@ -64,6 +73,7 @@ public class CategoriaService {
         categoriaRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAll() {
         categoriaRepository.deleteAll();
     }

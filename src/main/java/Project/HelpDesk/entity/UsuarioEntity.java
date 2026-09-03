@@ -1,7 +1,6 @@
 package Project.HelpDesk.entity;
 
 import Project.HelpDesk.enums.Perfil;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,15 +45,12 @@ public class UsuarioEntity {
     @Enumerated(value = EnumType.STRING)
     private Perfil perfil;
 
-    @OneToMany(mappedBy = "userCliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "userCliente", cascade = CascadeType.ALL)
     private Set<ChamadoEntity> clientes;
 
-    @OneToMany(mappedBy = "userAtendente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "userAtendente", cascade = CascadeType.ALL)
     private Set<ChamadoEntity> atendentes;
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference
     private Set<ComentarioEntity> comentarios;
 }

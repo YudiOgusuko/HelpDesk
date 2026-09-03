@@ -2,17 +2,9 @@ package Project.HelpDesk.dto;
 
 import Project.HelpDesk.enums.Categoria;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Builder;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Builder
-public class CategoriaDto {
-
-    @NotNull
-    private Categoria nome;
+public record CategoriaDto(@NotNull Categoria nome) {
 
 }
