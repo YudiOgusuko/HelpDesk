@@ -3,8 +3,7 @@ package Project.HelpDesk.dto;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-
+import lombok.Builder;
 
 @JsonPropertyOrder({
         "texto",
@@ -12,20 +11,9 @@ import lombok.*;
         "user"
 })
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Builder
-public class ComentarioChamadoDto {
-
-    @NotBlank
-    private String texto;
-
-    @NotNull
-    private Long chamado;
-
-    @NotNull
-    private Long user;
+public record ComentarioChamadoDto(@NotBlank String texto,
+                                   @NotNull Long chamado,
+                                   @NotNull Long user
+                                    ) implements ComentarioBaseDto {
 }

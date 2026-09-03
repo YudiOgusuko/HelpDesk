@@ -1,7 +1,6 @@
 package Project.HelpDesk.entity;
 
 import Project.HelpDesk.enums.Categoria;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,7 +34,6 @@ public class CategoriaEntity {
     @Enumerated(value = EnumType.STRING)
     private Categoria nome;
 
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
     private Set<ChamadoEntity> chamados;
 }

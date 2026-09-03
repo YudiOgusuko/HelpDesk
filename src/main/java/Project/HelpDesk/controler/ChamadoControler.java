@@ -1,13 +1,13 @@
 package Project.HelpDesk.controler;
 
 import Project.HelpDesk.dto.ChamadoDto;
-import Project.HelpDesk.entity.ChamadoEntity;
 import Project.HelpDesk.projection.ChamadoProjection;
 import Project.HelpDesk.service.ChamadoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,49 +22,43 @@ public class ChamadoControler {
     private final ChamadoService service;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<ChamadoEntity> findAll() {
-        return service.findAll();
+    public ResponseEntity<List<ChamadoDto>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ChamadoEntity findById(@PathVariable Long id) {
-        return service.findById(id);
+    public ResponseEntity<ChamadoDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @GetMapping(value = "/projection")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ChamadoProjection> getProjection() {
-        return service.getProjection();
+    public ResponseEntity<List<ChamadoProjection>> getProjection() {
+        return ResponseEntity.ok(service.getProjection());
     }
 
     @GetMapping(value = "/page/{page}/size/{size}")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<ChamadoProjection> getPageable(@PathVariable Integer page, @PathVariable Integer size) {
-        return service.getPageable(page, size);
+    public ResponseEntity<Page<ChamadoProjection>> getPageable(@PathVariable Integer page, @PathVariable Integer size) {
+        return ResponseEntity.ok(service.getPageable(page, size));
     }
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void criarChamado(@RequestBody ChamadoDto chamadoDto) {
-        service.criarChamado(chamadoDto);
+    public ResponseEntity<ChamadoDto> criarChamado(@RequestBody ChamadoDto chamadoDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarChamado(chamadoDto));
     }
 
     @PutMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void alterarChamado(@PathVariable Long id,@Valid  @RequestBody ChamadoDto chamadoDto) {
-        service.alterarChamado(id, chamadoDto);
+    public ResponseEntity<ChamadoDto> alterarChamado(@PathVariable Long id,@Valid  @RequestBody ChamadoDto chamadoDto) {
+        return ResponseEntity.ok(service.alterarChamado(id, chamadoDto));
     }
 
     @DeleteMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAll() {
+    public ResponseEntity<Void> deleteAll() {
         service.deleteAll();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

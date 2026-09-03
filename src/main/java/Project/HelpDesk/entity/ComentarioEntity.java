@@ -1,6 +1,5 @@
 package Project.HelpDesk.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
@@ -41,12 +40,10 @@ public class ComentarioEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chamado_id")
-    @JsonBackReference
     private ChamadoEntity chamado;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonBackReference
     private UsuarioEntity user;
 
     @PrePersist
